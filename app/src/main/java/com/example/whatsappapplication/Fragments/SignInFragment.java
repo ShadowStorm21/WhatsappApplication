@@ -40,7 +40,6 @@ public class SignInFragment extends Fragment {
     private TextInputEditText editTextEmail,editTextPassword;
     private FirebaseAuth mAuth;
     private static final String TAG = "SignInFragment";
-    private FirebaseUser user;
     public SignInFragment() {
         // Required empty public constructor
     }
@@ -63,10 +62,6 @@ public class SignInFragment extends Fragment {
         editTextPassword = view.findViewById(R.id.EditTextPasswordLogin);
         Button button = view.findViewById(R.id.buttonSignIn);
 
-
-
-
-
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,6 +72,10 @@ public class SignInFragment extends Fragment {
 
                     String password = editTextPassword.getText().toString();
                     signIn(email,password);
+                }
+                else
+                {
+                    Toast.makeText(getContext(), "All fields are required!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -93,7 +92,7 @@ public class SignInFragment extends Fragment {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
-                            user = mAuth.getCurrentUser();
+                            FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.

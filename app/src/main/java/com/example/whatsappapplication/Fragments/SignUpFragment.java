@@ -62,13 +62,11 @@ public class SignUpFragment extends Fragment {
     private TextInputEditText editTextEmail,editTextUsername,editTextPassword,editTextConfirmPassword;
     private CircleImageView circleImageView;
     private FirebaseStorage mStorageRef;
-    private  Bitmap bitmap = null;
     private Uri selectedImage = null;
-    private String img_id;
     private FirebaseAuth mAuth;
     private Uri uri;
     private FirebaseUser firebaseUser;
-    private boolean hasImage = false;
+
     public SignUpFragment() {
         // Required empty public constructor
     }
@@ -267,18 +265,15 @@ public class SignUpFragment extends Fragment {
     private void updateUI(FirebaseUser user) {
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.putExtra("user",user);
-        String username = editTextUsername.getText().toString();
-        intent.putExtra("username",username);
-        intent.putExtra("photoUri",uri);
         startActivity(intent);
         getActivity().finish();
     }
 
-    private Uri uploadImageToFirebaseStorage()
+    private void uploadImageToFirebaseStorage()
     {
 
         if(selectedImage != null) {
-            img_id = UUID.randomUUID().toString();
+            String img_id = UUID.randomUUID().toString();
             final StorageReference reference = mStorageRef.getReference("ProfilePics").child(img_id + ".jpg");
             reference.putFile(selectedImage).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
@@ -317,7 +312,6 @@ public class SignUpFragment extends Fragment {
 
         }
 
-        return uri;
 
     }
 
@@ -326,10 +320,9 @@ public class SignUpFragment extends Fragment {
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("Users");
-
-            String key = myRef.push().getKey();
-            Users user = new Users(firebaseUser.getEmail(), firebaseUser.getUid(), editTextUsername.getText().toString(), uri.toString(), System.currentTimeMillis());
-            myRef.child(key).setValue(user);
+        String key = myRef.push().getKey();
+        Users user = new Users(firebaseUser.getEmail(), firebaseUser.getUid(), editTextUsername.getText().toString(), uri.toString(), System.currentTimeMillis());
+        myRef.child(key).setValue(user);
 
     }
 
@@ -343,7 +336,7 @@ public class SignUpFragment extends Fragment {
             {
                 selectedImage = data.getData();
                 try {
-                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
                     circleImageView.setImageBitmap(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
