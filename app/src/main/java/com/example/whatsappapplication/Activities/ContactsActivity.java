@@ -1,7 +1,10 @@
 package com.example.whatsappapplication.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,14 +39,25 @@ public class ContactsActivity extends AppCompatActivity {
         listView = findViewById(R.id.contactsListView);
         usersList = (List<Users>) getIntent().getSerializableExtra("contactsList");
 
-        if(usersList.get(0).getUid() == null)
-        {
-            getUsers();
 
-        }
 
         contactsAdapter = new ContactsAdapter(this,usersList);
         listView.setAdapter(contactsAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Intent intent = new Intent(ContactsActivity.this,ChatActivity.class);
+                intent.putExtra("ReceiverUsername",usersList.get(position).getUsername());
+                intent.putExtra("ReceiverLastSeen",usersList.get(position).getLastSeen());
+                intent.putExtra("ReceiverUserId",usersList.get(position).getUid());
+                intent.putExtra("ReceiverPhotoUri",usersList.get(position).getPhotoUrl());
+                startActivity(intent);
+                finish();
+            }
+        });
+
 
 
     }

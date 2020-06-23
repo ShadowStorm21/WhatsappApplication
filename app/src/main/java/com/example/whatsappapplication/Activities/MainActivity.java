@@ -34,10 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = MainActivity.this.getClass().getSimpleName();
     private FirebaseAuth mAuth;
     private FirebaseUser firebaseUser;
-    private ViewPager viewPager;
-    private TabLayout tabs;
-    private Toolbar toolbar;
-    private FloatingActionButton fab;
     private List<Users> usersList;
 
     @Override
@@ -45,13 +41,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        viewPager = findViewById(R.id.view_pager);
+        ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(new TabAdapter(getSupportFragmentManager(), FragmentPagerAdapter.POSITION_NONE));
-        tabs = findViewById(R.id.tabs);
+        TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar((Toolbar) toolbar);
-        fab = findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         usersList = new ArrayList<>();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

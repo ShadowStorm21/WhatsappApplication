@@ -2,13 +2,50 @@ package com.example.whatsappapplication.Models;
 
 public class Chats {
     private String chat_Id;
-    private String name;
-    private String profilePic;
+    private String receiverUsername;
+    private String message;
+    private long timestamp;
+    private boolean seen;
 
-    public Chats(String chat_Id, String name, String profilePic) {
+
+    public Chats(String chat_Id, String receiverUsername, String message, long timestamp, boolean seen) {
         this.chat_Id = chat_Id;
-        this.name = name;
-        this.profilePic = profilePic;
+        this.receiverUsername = receiverUsername;
+        this.message = message;
+        this.timestamp = timestamp;
+        this.seen = seen;
+    }
+
+    public String getReceiverUsername() {
+        return receiverUsername;
+    }
+
+    public void setReceiverUsername(String receiverUsername) {
+        this.receiverUsername = receiverUsername;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public boolean isSeen() {
+        return seen;
+    }
+
+    public void setSeen(boolean seen) {
+        this.seen = seen;
     }
 
     public Chats() {
@@ -22,19 +59,4 @@ public class Chats {
         this.chat_Id = chat_Id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getProfilePic() {
-        return profilePic;
-    }
-
-    public void setProfilePic(String profilePic) {
-        this.profilePic = profilePic;
-    }
 }

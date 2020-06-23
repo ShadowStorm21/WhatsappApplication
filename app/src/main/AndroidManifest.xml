@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".Activities.ContactsActivity"></activity>
+        <activity android:name=".Activities.ChatActivity"></activity>
+        <activity android:name=".Activities.ContactsActivity" />
         <activity android:name=".Activities.MainActivity" />
         <activity
             android:name=".Activities.AuthenticationActivity"
