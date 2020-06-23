@@ -1,6 +1,8 @@
 package com.example.whatsappapplication.Models;
 
-public class Users {
+import java.io.Serializable;
+
+public class Users implements Serializable {
     private String email;
     private String uid;
     private String username;

@@ -1,61 +1,80 @@
 package com.example.whatsappapplication.Activities;
 
-import android.net.Uri;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-
-import com.example.whatsappapplication.Models.Users;
-import com.example.whatsappapplication.R;
-
-
-import com.example.whatsappapplication.TabsAdapter.TabAdapter;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.os.Handler;
-import android.view.View;
+import com.example.whatsappapplication.Models.Users;
+import com.example.whatsappapplication.R;
+import com.example.whatsappapplication.TabsAdapter.TabAdapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private final String TAG = MainActivity.this.getClass().getSimpleName();
     private FirebaseAuth mAuth;
     private FirebaseUser firebaseUser;
+    private ViewPager viewPager;
+    private TabLayout tabs;
+    private Toolbar toolbar;
+    private FloatingActionButton fab;
+    private List<Users> usersList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ViewPager viewPager = findViewById(R.id.view_pager);
+        viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(new TabAdapter(getSupportFragmentManager(), FragmentPagerAdapter.POSITION_NONE));
-        TabLayout tabs = findViewById(R.id.tabs);
+        tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        FloatingActionButton fab = findViewById(R.id.fab);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar((Toolbar) toolbar);
+        fab = findViewById(R.id.fab);
+        usersList = new ArrayList<>();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+                Intent intent = new Intent(MainActivity.this,ContactsActivity.class);
+                intent.putExtra("contactsList", (Serializable) usersList);
+                startActivity(intent);
+
             }
         });
 
         mAuth = FirebaseAuth.getInstance();
         firebaseUser = mAuth.getCurrentUser();
 
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                getUsers();
+            }
+        });
 
     }
-
 
 
     @Override
@@ -78,5 +97,38 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void getUsers()
+    {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("Users");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String uid = firebaseUser.getUid();
+                Log.i(TAG,"user_id :"+uid);
+                for(DataSnapshot users : dataSnapshot.getChildren())
+                {
+
+                    Users user = users.getValue(Users.class);
+                    if(!user.getUid().equals(uid))
+                    {
+                        usersList.add(user);
+                    }
+
+                    Log.i(TAG, "user_id from database :" + user.getUid());
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
     }
 }

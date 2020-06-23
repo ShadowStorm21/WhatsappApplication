@@ -1,13 +1,7 @@
 package com.example.whatsappapplication.Fragments;
 
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +9,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.example.whatsappapplication.Activities.MainActivity;
-import com.example.whatsappapplication.Models.Users;
 import com.example.whatsappapplication.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,9 +25,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class SignInFragment extends Fragment {
@@ -40,6 +36,8 @@ public class SignInFragment extends Fragment {
     private TextInputEditText editTextEmail,editTextPassword;
     private FirebaseAuth mAuth;
     private static final String TAG = "SignInFragment";
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference myRef = database.getReference("Users");
     public SignInFragment() {
         // Required empty public constructor
     }
@@ -93,6 +91,7 @@ public class SignInFragment extends Fragment {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            updateLastSeen(user);
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -128,6 +127,35 @@ public class SignInFragment extends Fragment {
         }
 
         return true;
+    }
+
+    private void updateLastSeen(final FirebaseUser user)
+    {
+
+        myRef.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Map<String, Object> UserValues = new HashMap();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    UserValues.put(snapshot.getKey(),snapshot.getValue());
+                }
+
+                UserValues.put("lastSeen",System.currentTimeMillis());
+
+                myRef.child(user.getUid()).updateChildren(UserValues).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
