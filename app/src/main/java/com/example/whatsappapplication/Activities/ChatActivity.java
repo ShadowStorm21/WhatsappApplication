@@ -212,8 +212,8 @@ public class ChatActivity extends AppCompatActivity {
             Map<String,Object> detailsMap = new HashMap<>();
             detailsMap.put(messageSenderRef + "/" + senderMessagePushID, senderMessage);
             detailsMap.put(messageReceiverRef + "/" + receiverMessagePushID, receiverMessage);
-            detailsMap.put(chatSenderRef + "/" + senderChatPushID, senderChat);
-            detailsMap.put(chatReceiverRef + "/" + receiverChatPushID, receiverChat);
+            detailsMap.put(chatSenderRef + "/" , senderChat);
+            detailsMap.put(chatReceiverRef + "/", receiverChat);
 
 
             RootRef.updateChildren(detailsMap).addOnCompleteListener(new OnCompleteListener() {

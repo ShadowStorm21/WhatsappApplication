@@ -2,6 +2,7 @@ package com.example.whatsappapplication.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import java.util.List;
 
 public class ChatFragment extends Fragment {
 
+    private static final String TAG = "ChatFragment";
     private ChatsAdapter chatsAdapter;
     private List<Chats> chatsList;
     private FirebaseAuth mAuth;
@@ -74,13 +76,13 @@ public class ChatFragment extends Fragment {
     private void getUserChats()
     {
         try {
-            chatsList.clear();
+
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("Chats");
             myRef.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                    chatsList.clear();
                     for (DataSnapshot userChats : snapshot.getChildren()) {
                         chatsList.add(userChats.getValue(Chats.class));
                     }
