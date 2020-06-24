@@ -10,8 +10,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.whatsappapplication.Activities.MainActivity;
 import com.example.whatsappapplication.Models.Chats;
 import com.example.whatsappapplication.R;
+import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -45,7 +47,11 @@ public class ChatsAdapter extends ArrayAdapter<Chats> {
         DateFormat formatter = new SimpleDateFormat("HH:mm");
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         String dateFormatted = formatter.format(date);
-
+        lastSeen.setText(dateFormatted);
+        if(MainActivity.photoUri != null)
+        Picasso.get().load(MainActivity.photoUri).placeholder(R.drawable.ic_baseline_person_pin_24).into(circleImageView);
+        else
+            circleImageView.setImageResource(R.drawable.ic_baseline_person_pin_24);
         return convertView;
 
     }

@@ -26,7 +26,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser firebaseUser;
     private List<Users> usersList;
+    public static String photoUri = null;
+    public static String rUid = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 Intent intent = new Intent(MainActivity.this,ContactsActivity.class);
-                intent.putExtra("contactsList", (Serializable) usersList);
                 startActivity(intent);
 
             }
@@ -113,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
                     if(!user.getUid().equals(uid))
                     {
                         usersList.add(user);
+                        photoUri = user.getPhotoUrl();
+                        rUid = user.getUid();
                     }
 
                     Log.i(TAG, "user_id from database :" + user.getUid());

@@ -57,34 +57,35 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MyView
         Messages messages = messagesList.get(position);
         String sender_Id = mAuth.getUid();
         String from_User_Id = messages.getFrom();
+            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+            myRef = firebaseDatabase.getReference("Users");
+            myRef.child(from_User_Id).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-        myRef = (DatabaseReference) FirebaseDatabase.getInstance().getReference("Users").child(from_User_Id).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                if(snapshot.child("photoUrl").equals("default"))
-                {
-                    holder.profileImg.setImageResource(R.drawable.ic_baseline_person_pin_24);
+                    if (snapshot.child("photoUrl").equals("default")) {
+                        holder.profileImg.setImageResource(R.drawable.ic_baseline_person_pin_24);
+                    } else {
+                        String uri = snapshot.child("photoUrl").getValue().toString();
+                        Picasso.get().load(uri).placeholder(R.drawable.ic_baseline_person_pin_24).into(holder.profileImg);
+                    }
                 }
-                else
-                {
-                    String uri = snapshot.child("photoUrl").getValue().toString();
-                    Picasso.get().load(uri).placeholder(R.drawable.ic_baseline_person_pin_24).into(holder.profileImg);
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
                 }
-            }
+            });
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
 
         if (from_User_Id.equals(sender_Id)) {
 
             holder.messageSender.setText(messages.getMessage());
+            holder.messageReceiver.setVisibility(View.INVISIBLE);
+            holder.profileImg.setVisibility(View.INVISIBLE);
         } else {
             holder.messageSender.setVisibility(View.INVISIBLE);
-
             holder.messageReceiver.setVisibility(View.VISIBLE);
             holder.profileImg.setVisibility(View.VISIBLE);
             holder.messageReceiver.setText(messages.getMessage());

@@ -1,14 +1,18 @@
 package com.example.whatsappapplication.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.whatsappapplication.Activities.ChatActivity;
+import com.example.whatsappapplication.Activities.MainActivity;
 import com.example.whatsappapplication.Adapters.ChatsAdapter;
 import com.example.whatsappapplication.Models.Chats;
 import com.example.whatsappapplication.R;
@@ -45,7 +49,7 @@ public class ChatFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
@@ -53,6 +57,16 @@ public class ChatFragment extends Fragment {
         chatsList = new ArrayList<>();
         chatsAdapter = new ChatsAdapter(getContext(),chatsList);
         listView.setAdapter(chatsAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), ChatActivity.class);
+                intent.putExtra("ReceiverUsername",chatsList.get(position).getReceiverUsername());
+                intent.putExtra("ReceiverPhotoUri", MainActivity.photoUri);
+                intent.putExtra("ReceiverUserId",MainActivity.rUid);
+                startActivity(intent);
+            }
+        });
         getUserChats();
         return view;
     }
@@ -60,7 +74,7 @@ public class ChatFragment extends Fragment {
     private void getUserChats()
     {
         try {
-
+            chatsList.clear();
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("Chats");
             myRef.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
